@@ -75,7 +75,7 @@ function smoothScroll() {
 }
 
 import { fetchImages } from "./js/pixabay-api.js";
-import { renderImages, clearGallery, showError, showNotification, toggleLoader } from "./render-functions.js";
+import { renderImages, clearGallery, showError, showNotification, toggleLoader } from "./js/render-functions.js";
 import "css-loader";
 
 
