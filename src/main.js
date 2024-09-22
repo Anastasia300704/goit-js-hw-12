@@ -74,8 +74,8 @@ function smoothScroll() {
   });
 }
 
-import { fetchImages } from "./pixabay-api";
-import { renderImages, clearGallery, showError, showNotification, toggleLoader } from "./render-functions";
+import { fetchImages } from "./js/pixabay-api.js";
+import { renderImages, clearGallery, showError, showNotification, toggleLoader } from "./render-functions.js";
 import "css-loader";
 
 
