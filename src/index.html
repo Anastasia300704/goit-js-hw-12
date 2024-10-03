@@ -9,8 +9,17 @@
   </head>
   <body>
    
-<button id="load-more" hidden>Load more</button>
-
+    <header>
+      <form id="search-form">
+        <input type="text" name="searchQuery" placeholder="Search images..." required />
+        <button type="submit">Search</button>
+      </form>
+    </header>
+    
+    <section class="gallery"></section>
+    
+    <button class="load-more hidden">Load more</button>
+    <p class="end-message hidden"></p>
     <script type="module" src="./main.js"></script>
   </body>
 </html>
