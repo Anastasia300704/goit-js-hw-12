@@ -1,76 +1,133 @@
-const searchForm = document.querySelector('#search-form');
-const loadMoreBtn = document.querySelector('.load-more');
+import { fetchImages } from './js/pixabay-api.js';
+import SimpleLightbox from 'simplelightbox';
+import 'simplelightbox/dist/simple-lightbox.min.css';
 
-let query = '';
 let page = 1;
-let totalHits = 0;
+const perPage = 15;
+let searchQuery = '';
+let lightbox = null;
 
-searchForm.addEventListener('submit', onFormSubmit);
-loadMoreBtn.addEventListener('click', onLoadMore);
+const searchForm = document.getElementById('search-form');
+const gallery = document.getElementById('gallery');
+const loadMoreBtn = document.getElementById('load-more');
+const loader = document.getElementById('loader');
+const endMessage = document.getElementById('end-message');
 
-async function onFormSubmit(event) {
-  event.preventDefault();
-
-  query = event.currentTarget.elements.searchQuery.value.trim();
-
-  if (query === '') {
-    iziToast.error({ message: 'Please enter a search term' });
-    return;
+function initializeLightbox() {
+  if (lightbox) {
+    lightbox.refresh();
+  } else {
+    lightbox = new SimpleLightbox('.gallery-item a', { /* опції за бажанням */ });
   }
+}
+
+function renderImages(images) {
+  const markup = images.map(image => `
+    <div class="gallery-item">
+      <a href="${image.largeImageURL}">
+        <img src="${image.webformatURL}" alt="${image.tags}" loading="lazy" />
+      </a>
+    </div>
+  `).join('');
+  gallery.insertAdjacentHTML('beforeend', markup);
+  initializeLightbox();
+}
+
+function clearGallery() {
+  gallery.innerHTML = '';
+}
+
+function showLoadMoreBtn() {
+  loadMoreBtn.classList.remove('hidden');
+}
+
+function hideLoadMoreBtn() {
+  loadMoreBtn.classList.add('hidden');
+}
+
+function showLoader() {
+  loader.classList.remove('hidden');
+}
+
+function hideLoader() {
+  loader.classList.add('hidden');
+}
+
+function showEndMessage(message = "We're sorry, but you've reached the end of search results.") {
+  endMessage.textContent = message;
+  endMessage.classList.remove('hidden');
+}
+
+function hideEndMessage() {
+  endMessage.classList.add('hidden');
+}
+
+function scrollPage() {
+  const { height: cardHeight } = gallery.firstElementChild.getBoundingClientRect();
+  
+  window.scrollBy({
+    top: cardHeight * 2,
+    behavior: 'smooth',
+  });
+}
+
+function checkEndOfResults(data) {
+  if (page * perPage >= data.totalHits) {
+    hideLoadMoreBtn();
+    showEndMessage();
+  } else {
+    showLoadMoreBtn();
+  }
+}
+
+async function onSearchSubmit(e) {
+  e.preventDefault();
+  searchQuery = e.currentTarget.elements.query.value.trim();
+  
+  if (!searchQuery) return;
 
   page = 1;
+  hideEndMessage();
   clearGallery();
-  toggleLoadMoreBtn(false);
+  hideLoadMoreBtn();
   showLoader();
 
   try {
-    const { images, totalHits: hits } = await fetchImages(query, page);
-    totalHits = hits;
-    renderGallery(images);
-
-    if (totalHits > 15) {
-      toggleLoadMoreBtn(true);
+    const data = await fetchImages(searchQuery, page, perPage);
+    if (data.hits.length === 0) {
+      showEndMessage("No images found. Please try a different search term.");
+      return;
     }
+    renderImages(data.hits);
+    checkEndOfResults(data);
   } catch (error) {
-    showNoResultsMessage();
+    showEndMessage("An error occurred while fetching images. Please try again later.");
   } finally {
     hideLoader();
   }
 }
 
-async function onLoadMore() {
+async function loadMoreImages() {
   page += 1;
-  toggleLoadMoreBtn(false);
   showLoader();
 
   try {
-    const { images } = await fetchImages(query, page);
-    renderGallery(images);
-
-    if (page * 15 >= totalHits) {
-      toggleLoadMoreBtn(false);
-      showEndOfResultsMessage();
-    } else {
-      toggleLoadMoreBtn(true);
-    }
-
-    const { height: cardHeight } = document.querySelector('.gallery').firstElementChild.getBoundingClientRect();
-    window.scrollBy({
-      top: cardHeight * 2,
-      behavior: 'smooth',
-    });
+    const data = await fetchImages(searchQuery, page, perPage);
+    renderImages(data.hits);
+    scrollPage();
+    checkEndOfResults(data);
   } catch (error) {
-    iziToast.error({ message: 'Something went wrong during loading more images.' });
+    showEndMessage("An error occurred while fetching images. Please try again later.");
   } finally {
     hideLoader();
   }
 }
 
-import { fetchImages } from "./js/pixabay-api.js";
-import { renderImages, clearGallery, showError, showNotification, toggleLoader } from "./js/render-functions.js";
-import "css-loader";
+searchForm.addEventListener('submit', onSearchSubmit);
+loadMoreBtn.addEventListener('click', loadMoreImages);
 
-
+hideLoadMoreBtn();
+hideEndMessage();
 
 
 

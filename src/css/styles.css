@@ -6,24 +6,49 @@
 */
 /* Common styles */
 @import url('./reset.css');
+/* src/styles/styles.css */
+
 body {
   font-family: Arial, sans-serif;
   padding: 20px;
+  background-color: #f2f2f2;
 }
 
-#search-form {
+h1 {
+  text-align: center;
   margin-bottom: 20px;
 }
 
-#gallery {
+#search-form {
   display: flex;
-  flex-wrap: wrap;
-  gap: 10px;
+  justify-content: center;
+  margin-bottom: 20px;
+}
+
+#search-form input[type="text"] {
+  width: 300px;
+  padding: 10px;
+  font-size: 16px;
+}
+
+#search-form button {
+  padding: 10px 20px;
+  font-size: 16px;
+  margin-left: 10px;
+  cursor: pointer;
+}
+
+#gallery {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 15px;
 }
 
 .gallery-item {
-  width: calc(25% - 10px);
-  box-sizing: border-box;
+  background-color: #fff;
+  border-radius: 5px;
+  overflow: hidden;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
 }
 
 .gallery-item img {
@@ -34,20 +59,27 @@ body {
 
 #load-more {
   display: none;
-  /* Спочатку кнопка прихована */
+  /* Початково прихована */
   padding: 10px 20px;
   margin: 20px auto;
-  display: block;
   cursor: pointer;
+  font-size: 16px;
 }
 
 #loader {
   display: none;
-  /* Спочатку індикатор прихований */
+  /* Початково прихований */
   text-align: center;
   margin-top: 10px;
 }
 
 .hidden {
   display: none;
+}
+
+#end-message {
+  text-align: center;
+  margin-top: 20px;
+  font-size: 18px;
+  color: #555;
 }
