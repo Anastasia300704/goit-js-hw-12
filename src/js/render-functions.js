@@ -1,3 +1,9 @@
+import SimpleLightbox from "simplelightbox";
+import "simplelightbox/dist/simple-lightbox.min.css";
+import iziToast from "izitoast";
+import "izitoast/dist/css/iziToast.min.css";
+
+
 let gallery = new SimpleLightbox('.gallery a');
 
 export function renderImages(images) {
@@ -50,9 +56,6 @@ export function toggleLoader(isLoading) {
   }
 }
 
-import SimpleLightbox from "simplelightbox";
-import "simplelightbox/dist/simple-lightbox.min.css";
-import iziToast from "izitoast";
-import "izitoast/dist/css/iziToast.min.css";
+
 
 
