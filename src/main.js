@@ -1,6 +1,9 @@
 import { fetchImages } from './js/pixabay-api.js';
 import SimpleLightbox from 'simplelightbox';
 import 'simplelightbox/dist/simple-lightbox.min.css';
+import 'izitoast/dist/css/iziToast.min.css';
+import iziToast from 'izitoast';
+
 
 let page = 1;
 const perPage = 15;
@@ -128,6 +131,87 @@ loadMoreBtn.addEventListener('click', loadMoreImages);
 
 hideLoadMoreBtn();
 hideEndMessage();
+
+function showEndOfResultsMessage() {
+  iziToast.info({
+    title: 'End of Results',
+    message: "We're sorry, but you've reached the end of search results.",
+    position: 'topRight',
+  });
+}
+
+
+function showLoader() {
+  loader.classList.remove('hidden');
+  loadMoreBtn.classList.add('hidden');
+}
+
+function hideLoader() {
+  loader.classList.add('hidden');
+  loadMoreBtn.classList.remove('hidden');
+}
+
+form.addEventListener('submit', async (event) => {
+  event.preventDefault();
+  query = event.target.elements.searchQuery.value.trim();
+  page = 1; // Скидання сторінки при новому запиті
+  gallery.innerHTML = ''; // Очищуємо галерею
+  loadMoreBtn.classList.add('hidden'); // Ховаємо кнопку
+
+  showLoader(); // Показуємо лоадер
+
+  const images = await fetchImages(query, page);
+  renderImages(images.hits);
+
+  hideLoader(); // Ховаємо лоадер після завантаження
+
+  if (images.hits.length > 0) {
+    loadMoreBtn.classList.remove('hidden'); // Показуємо кнопку, якщо є зображення
+  }
+
+  if (gallery.childElementCount >= images.totalHits) {
+    showEndOfResultsMessage(); // Повідомлення про кінець колекції
+  }
+});
+
+
+loadMoreBtn.addEventListener('click', async () => {
+  page += 1; // Збільшуємо сторінку
+  showLoader(); // Показуємо лоадер замість кнопки
+
+  const images = await fetchImages(query, page);
+  renderImages(images.hits);
+
+  hideLoader(); // Ховаємо лоадер після завантаження
+
+  if (gallery.childElementCount >= images.totalHits) {
+    loadMoreBtn.classList.add('hidden');
+    showEndOfResultsMessage();
+  }
+});
+
+form.addEventListener('submit', async (event) => {
+  event.preventDefault();
+  query = event.target.elements.searchQuery.value.trim();
+  page = 1;
+  gallery.innerHTML = '';
+  
+  showLoader();
+  
+  const images = await fetchImages(query, page);
+  renderImages(images.hits);
+
+  hideLoader();
+  
+  if (images.hits.length > 0 && gallery.childElementCount < images.totalHits) {
+    loadMoreBtn.classList.remove('hidden'); // Показуємо кнопку, якщо є ще зображення
+  }
+
+  if (gallery.childElementCount >= images.totalHits) {
+    showEndOfResultsMessage();
+  }
+});
+
 
 
 
