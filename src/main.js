@@ -140,12 +140,6 @@ function showEndOfResultsMessage() {
   });
 }
 
-
-function showLoader() {
-  loader.classList.remove('hidden');
-  loadMoreBtn.classList.add('hidden');
-}
-
 function hideLoader() {
   loader.classList.add('hidden');
   loadMoreBtn.classList.remove('hidden');
