@@ -140,10 +140,6 @@ function showEndOfResultsMessage() {
   });
 }
 
-function hideLoader() {
-  loader.classList.add('hidden');
-  loadMoreBtn.classList.remove('hidden');
-}
 
 form.addEventListener('submit', async (event) => {
   event.preventDefault();
