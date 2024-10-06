@@ -1,8 +1,6 @@
-import { fetchImages } from './js/pixabay-api.js';
-import SimpleLightbox from 'simplelightbox';
-import 'simplelightbox/dist/simple-lightbox.min.css';
-import 'izitoast/dist/css/iziToast.min.css';
 import iziToast from 'izitoast';
+import 'izitoast/dist/css/iziToast.min.css';
+
 
 let query = '';
 let page = 1;
