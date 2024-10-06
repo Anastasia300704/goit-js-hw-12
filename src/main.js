@@ -6,16 +6,17 @@ let query = '';
 let page = 1;
 const perPage = 15;
 
-const form = document.querySelector('.search-form'); 
-const gallery = document.querySelector('.gallery');
-const loadMoreBtn = document.querySelector('.load-more');
-const loader = document.querySelector('.loader');
+const form = document.querySelector('#search-form'); 
+const gallery = document.querySelector('.gallery'); 
+const loadMoreBtn = document.querySelector('#load-more'); 
+const loader = document.querySelector('#loader'); 
+
 
 async function fetchImages(query, page) {
   try {
     const response = await axios.get('https://pixabay.com/api/', {
       params: {
-        key: 'YOUR_API_KEY',
+        key: '46121082-abdd5301ce27c2765f644588b',
         q: query,
         page: page,
         per_page: perPage,

@@ -9,16 +9,16 @@
       </head>
       </body>
 <h1>Пошук Зображень</h1>
-      
+
       <form id="search-form">
-        <input type="text" name="query" placeholder="Введіть ключове слово..." required>
-        <button type="submit">Пошук</button>
+        <input type="text" name="searchQuery" placeholder="Search images..." />
+        <button type="submit">Search</button>
       </form>
+    
+      <div class="gallery"></div>
+      <button id="load-more" class="hidden">Load more</button>
+      <div id="loader" class="hidden"></div>
       
-      <div id="gallery"></div>
-      
-    <div class="loader hidden"></div>
-    <button class="load-more hidden">Load more</button>
 
       <div id="loader" class="hidden">Loading...</div>
       <div id="end-message" class="hidden">We're sorry, but you've reached the end of search results.</div>
@@ -29,3 +29,6 @@
     <script type="module" src="./main.js"></script>
   </body>
 </html>
+
+
+
