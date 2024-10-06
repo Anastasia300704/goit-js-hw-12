@@ -5,12 +5,12 @@ import 'izitoast/dist/css/iziToast.min.css';
 let query = '';
 let page = 1;
 const perPage = 15;
+let totalHits = 0;
 
-const form = document.querySelector('#search-form'); 
-const gallery = document.querySelector('.gallery'); 
-const loadMoreBtn = document.querySelector('#load-more'); 
-const loader = document.querySelector('#loader'); 
-
+const form = document.querySelector('#search-form');
+const gallery = document.querySelector('.gallery');
+const loadMoreBtn = document.querySelector('#load-more');
+const loader = document.querySelector('#loader');
 
 async function fetchImages(query, page) {
   try {
@@ -20,11 +20,20 @@ async function fetchImages(query, page) {
         q: query,
         page: page,
         per_page: perPage,
+        image_type: 'photo',        
+        orientation: 'horizontal',   
+        safesearch: true,            
       },
     });
     return response.data;
   } catch (error) {
+        iziToast.error({
+      title: 'Error',
+      message: 'Failed to fetch images. Please try again.',
+      position: 'topRight',
+    });
     console.error('Error fetching images:', error);
+    throw error;
   }
 }
 
@@ -33,24 +42,27 @@ async function handleImageSearch() {
 
   try {
     const images = await fetchImages(query, page);
+    totalHits = images.totalHits;
+
     if (page === 1) {
       gallery.innerHTML = ''; 
     }
 
     renderImages(images.hits);
 
-    if (images.hits.length < perPage || gallery.childElementCount >= images.totalHits) {
+    if (gallery.childElementCount < totalHits) {
+      loadMoreBtn.classList.remove('hidden');
+    } else {
       loadMoreBtn.classList.add('hidden');
       showEndOfResultsMessage();
-    } else {
-      loadMoreBtn.classList.remove('hidden');
     }
   } catch (error) {
-    console.error('Error fetching images:', error);
+    console.error('Error during image search:', error);
   } finally {
     hideLoader();
   }
 }
+
 
 form.addEventListener('submit', (event) => {
   event.preventDefault();
@@ -82,16 +94,14 @@ function renderImages(images) {
 }
 
 function showLoader() {
-   loader.classList.remove('hidden');
-  loadMoreBtn.classList.add('hidden');
+  loader.classList.remove('hidden');
+  loadMoreBtn.classList.add('hidden'); 
 }
 
 function hideLoader() {
-    loader.classList.add('hidden');
-  if (gallery.childElementCount < totalHits) {
-    loadMoreBtn.classList.remove('hidden'); 
-  }
+  loader.classList.add('hidden');
 }
+
 
 function showEndOfResultsMessage() {
   iziToast.info({

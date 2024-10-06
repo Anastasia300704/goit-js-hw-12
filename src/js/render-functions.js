@@ -1,57 +1,33 @@
-import SimpleLightbox from "simplelightbox";
-import "simplelightbox/dist/simple-lightbox.min.css";
+import SimpleLightbox from 'simplelightbox';
+import 'simplelightbox/dist/simple-lightbox.min.css';
 
-let gallery = new SimpleLightbox('.gallery a');
 
-export function renderImages(images) {
-  const galleryElement = document.querySelector('.gallery');
-  const markup = images
-    .map(({ webformatURL, largeImageURL, tags, likes, views, comments, downloads }) => {
-      return `
-        <a href="${largeImageURL}" class="gallery-item">
-          <img src="${webformatURL}" alt="${tags}" loading="lazy" />
-          <div class="info">
-            <p><b>Likes:</b> ${likes}</p>
-            <p><b>Views:</b> ${views}</p>
-            <p><b>Comments:</b> ${comments}</p>
-            <p><b>Downloads:</b> ${downloads}</p>
-          </div>
-        </a>
-      `;
-    })
-    .join('');
+let lightbox = new SimpleLightbox('.gallery a');
 
-  galleryElement.insertAdjacentHTML('beforeend', markup);
-  gallery.refresh();
+function renderImages(images) {
+  const markup = images.map(image => `
+    <a href="${image.largeImageURL}" class="photo-card">
+      <img src="${image.webformatURL}" alt="${image.tags}" loading="lazy" />
+      <div class="info">
+        <p><b>Likes</b>: ${image.likes}</p>
+        <p><b>Views</b>: ${image.views}</p>
+        <p><b>Comments</b>: ${image.comments}</p>
+        <p><b>Downloads</b>: ${image.downloads}</p>
+      </div>
+    </a>
+  `).join('');
+  gallery.insertAdjacentHTML('beforeend', markup);
+
+  lightbox.refresh(); 
 }
 
-export function clearGallery() {
-  const galleryElement = document.querySelector('.gallery');
-  galleryElement.innerHTML = '';
-}
-
-export function showError(message) {
-  iziToast.error({
-    title: 'Error',
-    message: message,
+export const smoothScroll = () => {
+  const { height: cardHeight } = document.querySelector('.image-item').getBoundingClientRect();
+  window.scrollBy({
+    top: cardHeight * 2,
+    behavior: 'smooth',
   });
-}
-
-export function showNotification(message) {
-  iziToast.info({
-    title: 'Info',
-    message: message,
-  });
-}
-
-export function toggleLoader(isLoading) {
-  const loader = document.querySelector('.loader');
-  if (isLoading) {
-    loader.classList.remove('hidden');
-  } else {
-    loader.classList.add('hidden');
-  }
-}
+};
 
 
 
