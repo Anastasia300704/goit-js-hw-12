@@ -14,7 +14,7 @@
 <h1>Пошук Зображень</h1>
 
       <form id="search-form">
-        <input type="text" id="query" placeholder="Enter search term" required />
+        <input type="text" id="searchQuery" name="searchQuery" placeholder="Search images..." />
         <button type="submit">Search</button>
       </form>
     
@@ -23,8 +23,6 @@
       
 
       <div id="loader" class="hidden">Loading...</div>
-      <p id="end-message" class="hidden">We're sorry, but you've reached the end of search results.</p>
-      <div id="loading-indicator"></div>
       
 
       <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
