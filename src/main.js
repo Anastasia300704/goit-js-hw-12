@@ -12,6 +12,8 @@ const gallery = document.querySelector('.gallery');
 const loadMoreBtn = document.querySelector('#load-more');
 const loader = document.querySelector('#loader');
 
+let lightbox = new SimpleLightbox('.gallery a');
+
 async function fetchImages(query, page) {
   try {
     const response = await axios.get('https://pixabay.com/api/', {
@@ -66,9 +68,18 @@ async function handleImageSearch() {
 
 form.addEventListener('submit', (event) => {
   event.preventDefault();
-  query = event.target.elements.searchQuery.value.trim();
-  page = 1; 
-  handleImageSearch(); 
+  const searchInput = document.querySelector('#searchQuery');
+  query = searchInput.value.trim();
+  page = 1;
+  if (query === '') {
+    iziToast.warning({
+      title: 'Warning',
+      message: 'Please enter a search query.',
+      position: 'topRight',
+    });
+    return;
+  }
+  handleImageSearch();
 });
 
 
@@ -79,7 +90,7 @@ loadMoreBtn.addEventListener('click', () => {
 
 function renderImages(images) {
   const markup = images.map(image => `
-    <div class="photo-card">
+    <a href="${image.largeImageURL}" class="photo-card">
       <img src="${image.webformatURL}" alt="${image.tags}" loading="lazy" />
       <div class="info">
         <p><b>Likes</b>: ${image.likes}</p>
@@ -87,10 +98,11 @@ function renderImages(images) {
         <p><b>Comments</b>: ${image.comments}</p>
         <p><b>Downloads</b>: ${image.downloads}</p>
       </div>
-    </div>
+    </a>
   `).join('');
-
   gallery.insertAdjacentHTML('beforeend', markup);
+
+  lightbox.refresh();
 }
 
 function showLoader() {
