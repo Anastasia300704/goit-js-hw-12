@@ -2,28 +2,28 @@ import axios from 'axios';
 
 const API_KEY = '46121082-abdd5301ce27c2765f644588b';
 const BASE_URL = 'https://pixabay.com/api/';
+let currentPage = 1;
+const perPage = 15;
 
-async function fetchImages(query, page) {
-  try {
-    const response = await axios.get('https://pixabay.com/api/', {
-      params: {
-        key: '46121082-abdd5301ce27c2765f644588b',
-        q: query,
-        page: page,
-        per_page: perPage,
-        image_type: 'photo',
-        orientation: 'horizontal',
-        safesearch: true,
-      },
-    });
-    return response.data;
-  } catch (error) {
-    iziToast.error({
-      title: 'Error',
-      message: 'Failed to fetch images. Please try again.',
-      position: 'topRight',
-    });
-    console.error('Error fetching images:', error);
-    throw error;
-  }
-}
+export const getImages = async (query) => {
+  const response = await axios.get(BASE_URL, {
+    params: {
+      key: API_KEY,
+      q: query,
+      image_type: 'photo',
+      orientation: 'horizontal',
+      safesearch: true,
+      page: currentPage,
+      per_page: perPage,
+    },
+  });
+
+  const { hits, totalHits } = response.data;
+  currentPage++;
+  return { hits, totalHits };
+};
+
+// Скидання сторінки для нового пошуку
+export const resetPage = () => {
+  currentPage = 1;
+};

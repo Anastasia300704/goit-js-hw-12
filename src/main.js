@@ -1,140 +1,79 @@
 import iziToast from 'izitoast';
 import 'izitoast/dist/css/iziToast.min.css';
+import { getImages, resetPage } from './js/pixabay-api.js';
+import { renderGallery, clearGallery } from './js/render-functions.js';
 
+
+const searchForm = document.querySelector('#search-form');
+const loadMoreBtn = document.querySelector('#loadMore');
+const loader = document.querySelector('#loader');
+const notification = document.querySelector('#notification');
 
 let query = '';
-let page = 1;
-const perPage = 15;
-let totalHits = 0;
+let lightbox = new SimpleLightbox('.gallery-item a');
 
-const form = document.querySelector('#search-form');
-const gallery = document.querySelector('.gallery');
-const loadMoreBtn = document.querySelector('#load-more');
-const loader = document.querySelector('#loader');
+// Функція показу лоадера
+const showLoader = () => {
+  loader.style.display = 'block';
+};
 
-let lightbox = new SimpleLightbox('.gallery a');
+// Функція приховування лоадера
+const hideLoader = () => {
+  loader.style.display = 'none';
+};
 
-async function fetchImages(query, page) {
-  try {
-    const response = await axios.get('https://pixabay.com/api/', {
-      params: {
-        key: '46121082-abdd5301ce27c2765f644588b',
-        q: query,
-        page: page,
-        per_page: perPage,
-        image_type: 'photo',        
-        orientation: 'horizontal',   
-        safesearch: true,            
-      },
-    });
-    return response.data;
-  } catch (error) {
-        iziToast.error({
-      title: 'Error',
-      message: 'Failed to fetch images. Please try again.',
-      position: 'topRight',
-    });
-    console.error('Error fetching images:', error);
-    throw error;
-  }
-}
+// Функція показу кнопки "Load More"
+const showLoadMoreBtn = () => {
+  loadMoreBtn.style.display = 'block';
+};
 
-async function handleImageSearch() {
+// Функція приховування кнопки "Load More"
+const hideLoadMoreBtn = () => {
+  loadMoreBtn.style.display = 'none';
+};
+
+// Пошук зображень
+const searchImages = async () => {
   showLoader();
-
   try {
-    const images = await fetchImages(query, page);
-    totalHits = images.totalHits;
-
-    if (page === 1) {
-      gallery.innerHTML = ''; 
+    const { hits, totalHits } = await getImages(query);
+    if (hits.length === 0) {
+      notification.textContent = 'Нічого не знайдено за вашим запитом.';
+      return;
     }
+    renderGallery(hits);
 
-    renderImages(images.hits);
-
-    if (gallery.childElementCount < totalHits) {
-      loadMoreBtn.classList.remove('hidden');
+    // Оновлення SimpleLightbox після рендерингу нових зображень
+    lightbox.refresh();
+    
+    if (document.querySelector('#gallery').childElementCount >= totalHits) {
+      hideLoadMoreBtn();
+      notification.textContent = "We're sorry, but you've reached the end of search results.";
     } else {
-      loadMoreBtn.classList.add('hidden');
-      showEndOfResultsMessage();
+      showLoadMoreBtn();
     }
   } catch (error) {
-    console.error('Error during image search:', error);
+    console.error('Error fetching images:', error);
+    notification.textContent = 'Сталася помилка. Спробуйте ще раз.';
+    clearGallery();
   } finally {
     hideLoader();
   }
-}
+};
 
+// Обробка форми пошуку
+searchForm.addEventListener('submit', (e) => {
+  e.preventDefault();
+  query = e.target.elements.query.value.trim();
+  if (!query) return;
 
-form.addEventListener('submit', (event) => {
-  event.preventDefault();
-  const searchInput = document.querySelector('#searchQuery');
-  query = searchInput.value.trim();
-  page = 1;
-  if (query === '') {
-    iziToast.warning({
-      title: 'Warning',
-      message: 'Please enter a search query.',
-      position: 'topRight',
-    });
-    return;
-  }
-  handleImageSearch();
+  clearGallery();
+  resetPage();
+  hideLoadMoreBtn();
+  searchImages();
 });
 
-
+// Натискання на кнопку "Load More"
 loadMoreBtn.addEventListener('click', () => {
-  page += 1; 
-  handleImageSearch(); 
+  searchImages();
 });
-
-function renderImages(images) {
-  const markup = images.map(image => `
-    <a href="${image.largeImageURL}" class="photo-card">
-      <img src="${image.webformatURL}" alt="${image.tags}" loading="lazy" />
-      <div class="info">
-        <p><b>Likes</b>: ${image.likes}</p>
-        <p><b>Views</b>: ${image.views}</p>
-        <p><b>Comments</b>: ${image.comments}</p>
-        <p><b>Downloads</b>: ${image.downloads}</p>
-      </div>
-    </a>
-  `).join('');
-  gallery.insertAdjacentHTML('beforeend', markup);
-
-  lightbox.refresh();
-}
-
-function showLoader() {
-  loader.classList.remove('hidden');
-  loadMoreBtn.classList.add('hidden'); 
-}
-
-function hideLoader() {
-  loader.classList.add('hidden');
-}
-
-
-function showEndOfResultsMessage() {
-  iziToast.info({
-    title: 'End of Results',
-    message: "We're sorry, but you've reached the end of search results.",
-    position: 'topRight',
-  });
-}
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

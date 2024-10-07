@@ -1,33 +1,25 @@
 import SimpleLightbox from 'simplelightbox';
 import 'simplelightbox/dist/simple-lightbox.min.css';
 
+// Очищення галереї
+export const clearGallery = () => {
+  const gallery = document.querySelector('#gallery');
+  gallery.innerHTML = '';
+};
 
-let lightbox = new SimpleLightbox('.gallery a');
-
-function renderImages(images) {
-  const markup = images.map(image => `
-    <a href="${image.largeImageURL}" class="photo-card">
-      <img src="${image.webformatURL}" alt="${image.tags}" loading="lazy" />
-      <div class="info">
-        <p><b>Likes</b>: ${image.likes}</p>
-        <p><b>Views</b>: ${image.views}</p>
-        <p><b>Comments</b>: ${image.comments}</p>
-        <p><b>Downloads</b>: ${image.downloads}</p>
-      </div>
-    </a>
+// Відображення зображень у галереї
+export const renderGallery = (images) => {
+  const gallery = document.querySelector('#gallery');
+  const markup = images.map(({ webformatURL, largeImageURL, tags }) => `
+    <div class="gallery-item">
+      <a href="${largeImageURL}" class="gallery-link">
+        <img src="${webformatURL}" alt="${tags}" loading="lazy" />
+      </a>
+    </div>
   `).join('');
   gallery.insertAdjacentHTML('beforeend', markup);
-
-  lightbox.refresh(); 
-}
-
-export const smoothScroll = () => {
-  const { height: cardHeight } = document.querySelector('.image-item').getBoundingClientRect();
-  window.scrollBy({
-    top: cardHeight * 2,
-    behavior: 'smooth',
-  });
 };
+
 
 
 
