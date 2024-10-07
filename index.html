@@ -6,24 +6,23 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>goit-js-hw-12</title>
         <script type="module" crossorigin src="/goit-js-hw-12/index.js"></script>
-        <link rel="modulepreload" crossorigin href="/goit-js-hw-12/assets/vendor-I1I71QQ2.js">
-        <link rel="stylesheet" crossorigin href="/goit-js-hw-12/assets/vendor-DnveWo0P.css">
+        <link rel="modulepreload" crossorigin href="/goit-js-hw-12/assets/vendor--kuJrJgc.js">
+        <link rel="stylesheet" crossorigin href="/goit-js-hw-12/assets/vendor-DumFYO8Z.css">
         <link rel="stylesheet" crossorigin href="/goit-js-hw-12/assets/index-CK6KZl97.css">
       </head>
       </body>
 <h1>Пошук Зображень</h1>
 
-      <form id="search-form">
-        <input type="text" id="searchQuery" name="searchQuery" placeholder="Search images..." />
-        <button type="submit">Search</button>
-      </form>
-    
-      <div class="gallery"></div>
-      <button id="load-more" class="hidden">Load more</button>
-      
-
-      <div id="loader" class="hidden">Loading...</div>
-      
+  <form id="search-form">
+    <input type="text" name="query" placeholder="Search images..." />
+    <button type="submit">Search</button>
+  </form>
+  
+  <div id="gallery"></div>
+  
+  <button id="loadMore" style="display: none;">Load more</button>
+  <div id="loader" style="display: none;">Loading...</div>
+  <p id="notification"></p>
 
       <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
       <script src="https://cdnjs.cloudflare.com/ajax/libs/simplelightbox/2.1.3/simple-lightbox.min.js"></script>
